@@ -1,0 +1,402 @@
+
+<div class="client-types-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+
+    <div>
+      <div class="page-label">
+        <i class="bi bi-tags"></i>
+        CLIENT TYPE MANAGEMENT
+      </div>
+
+      <h1>Client Types</h1>
+
+      <p>
+        Manage client classifications, search records,
+        and maintain client type information.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <!-- REFRESH -->
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="loadClientTypes()"
+        [disabled]="isLoading"
+      >
+        <i
+          class="bi bi-arrow-clockwise"
+          [class.spin]="isLoading"
+        ></i>
+        Refresh
+      </button>
+
+      <!-- ADD -->
+      <button
+        type="button"
+        class="btn-add"
+        (click)="addClientType()"
+      >
+        <i class="bi bi-plus-lg"></i>
+        Add Client Type
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+    role="status"
+  >
+    <i class="bi bi-check-circle me-2"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- FILTER PANEL -->
+  <section class="filter-panel">
+
+    <div class="filter-header">
+
+      <h2>
+        <i class="bi bi-funnel"></i>
+        Filter Client Types
+      </h2>
+
+      <button
+        type="button"
+        class="btn-clear"
+        (click)="clearFilters()"
+      >
+        <i class="bi bi-x-circle"></i>
+        Clear Filters
+      </button>
+
+    </div>
+
+    <div class="filter-grid">
+
+      <!-- NAME FILTER -->
+      <div class="filter-field">
+        <label for="filterName">Name</label>
+
+        <input
+          id="filterName"
+          type="text"
+          class="form-control"
+          placeholder="Search by name"
+          [(ngModel)]="filters.name"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- DESCRIPTION FILTER -->
+      <div class="filter-field">
+        <label for="filterDescription">Description</label>
+
+        <input
+          id="filterDescription"
+          type="text"
+          class="form-control"
+          placeholder="Search by description"
+          [(ngModel)]="filters.description"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLIENT TYPE TABLE -->
+  <section class="table-panel">
+
+    <div class="table-header">
+
+      <div>
+        <h2>Client Type Records</h2>
+        <p>{{ totalItems }} client type(s) found</p>
+      </div>
+
+      <div class="table-options">
+
+        <label for="pageSize">Show</label>
+
+        <select
+          id="pageSize"
+          class="form-select"
+          [(ngModel)]="pageSize"
+          (ngModelChange)="changePageSize()"
+        >
+          <option
+            *ngFor="let size of pageSizeOptions"
+            [ngValue]="size"
+          >
+            {{ size }}
+          </option>
+        </select>
+
+        <span>entries</span>
+
+      </div>
+    </div>
+
+    <div class="table-responsive">
+
+      <table class="table client-types-table">
+
+        <!-- TABLE HEADER -->
+        <thead>
+          <tr>
+
+            <th>
+              <button
+                type="button"
+                class="sort-button"
+                (click)="sortById()"
+              >
+                ID
+
+                <i
+                  class="bi"
+                  [ngClass]="
+                    sortDirection === 'asc'
+                      ? 'bi-sort-numeric-down'
+                      : 'bi-sort-numeric-up'
+                  "
+                ></i>
+              </button>
+            </th>
+
+            <th>Name</th>
+            <th>Description</th>
+            <th class="actions-column">Actions</th>
+
+          </tr>
+        </thead>
+
+        <!-- TABLE BODY -->
+        <tbody>
+
+          <!-- LOADING -->
+          <tr *ngIf="isLoading">
+            <td colspan="4" class="state-cell">
+              <div
+                class="spinner-border spinner-border-sm text-primary"
+                role="status"
+              ></div>
+
+              <span class="ms-2">
+                Loading client types...
+              </span>
+            </td>
+          </tr>
+
+          <ng-container *ngIf="!isLoading">
+
+            <!-- CLIENT TYPE ROW -->
+            <tr
+              *ngFor="
+                let clientType of paginatedClientTypes;
+                trackBy: trackByClientTypeId
+              "
+            >
+
+              <!-- ID -->
+              <td>
+                <span class="client-type-id">
+                  #{{ clientType.id }}
+                </span>
+              </td>
+
+              <!-- NAME -->
+              <td>
+                <strong class="client-type-name">
+                  {{ clientType.name }}
+                </strong>
+              </td>
+
+              <!-- DESCRIPTION -->
+              <td>
+                <span class="client-type-description">
+                  {{ clientType.description || '—' }}
+                </span>
+              </td>
+
+              <!-- ACTION BUTTONS -->
+              <td class="actions-column">
+
+                <div class="row-actions">
+
+                  <!-- VIEW -->
+                  <button
+                    type="button"
+                    class="action-btn view"
+                    title="View Client Type"
+                    [attr.aria-label]="'View client type ' + clientType.id"
+                    (click)="viewClientType(clientType.id)"
+                  >
+                    <i class="bi bi-eye"></i>
+                    <span>View Client Type</span>
+                  </button>
+
+                  <!-- EDIT -->
+                  <button
+                    type="button"
+                    class="action-btn edit"
+                    title="Edit Client Type"
+                    [attr.aria-label]="'Edit client type ' + clientType.id"
+                    (click)="editClientType(clientType.id)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Edit Client Type</span>
+                  </button>
+
+                  <!-- DELETE -->
+                  <button
+                    type="button"
+                    class="action-btn delete"
+                    title="Delete Client Type"
+                    [attr.aria-label]="'Delete client type ' + clientType.id"
+                    [disabled]="isDeleting"
+                    (click)="deleteClientType(clientType)"
+                  >
+                    <i
+                      class="bi"
+                      [ngClass]="
+                        deletingClientTypeId === clientType.id
+                          ? 'bi-hourglass-split'
+                          : 'bi-trash'
+                      "
+                    ></i>
+
+                    <span>
+                      {{
+                        deletingClientTypeId === clientType.id
+                          ? 'Deleting...'
+                          : 'Delete Client Type'
+                      }}
+                    </span>
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+
+            <!-- EMPTY STATE -->
+            <tr *ngIf="paginatedClientTypes.length === 0">
+              <td colspan="4" class="state-cell">
+
+                <div class="empty-state">
+
+                  <i class="bi bi-inbox"></i>
+
+                  <h3>No client types found</h3>
+
+                  <p>
+                    No client type records match your filters.
+                  </p>
+
+                  <button
+                    type="button"
+                    class="btn-clear"
+                    (click)="clearFilters()"
+                  >
+                    Clear Filters
+                  </button>
+
+                </div>
+
+              </td>
+            </tr>
+
+          </ng-container>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-footer">
+
+      <div class="pagination-info">
+        Showing
+        <strong>{{ startItem }}</strong>
+        to
+        <strong>{{ endItem }}</strong>
+        of
+        <strong>{{ totalItems }}</strong>
+        entries
+      </div>
+
+      <nav aria-label="Client type pagination">
+
+        <ul class="pagination mb-0">
+
+          <!-- PREVIOUS -->
+          <li
+            class="page-item"
+            [class.disabled]="currentPage === 1"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)"
+            >
+              Previous
+            </button>
+          </li>
+
+          <!-- PAGE NUMBERS -->
+          <li
+            *ngFor="let page of visiblePages"
+            class="page-item"
+            [class.active]="page === currentPage"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [attr.aria-current]="
+                page === currentPage ? 'page' : null
+              "
+              (click)="changePage(page)"
+            >
+              {{ page }}
+            </button>
+          </li>
+
+          <!-- NEXT -->
+          <li
+            class="page-item"
+            [class.disabled]="currentPage === totalPages"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)"
+            >
+              Next
+            </button>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+  </section>
+</div>

@@ -1,0 +1,371 @@
+
+<div class="client-edit-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+
+    <div>
+      <div class="page-label">
+        <i class="bi bi-people"></i>
+        CLIENT MANAGEMENT
+      </div>
+
+      <h1>Edit Client</h1>
+
+      <p>
+        Update the information of the selected client.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ERROR ALERT -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- LOADING -->
+  <div
+    *ngIf="isLoading"
+    class="loading-panel"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    ></div>
+
+    <p>Loading client information...</p>
+  </div>
+
+  <!-- EDIT FORM -->
+  <section
+    *ngIf="!isLoading"
+    class="form-panel"
+  >
+
+    <!-- FORM HEADER -->
+    <div class="form-header">
+
+      <div class="form-header-icon">
+        <i class="bi bi-pencil-square"></i>
+      </div>
+
+      <div>
+        <h2>Client Information</h2>
+
+        <p>
+          Editing Client ID:
+          <span class="record-id">
+            #{{ clientId }}
+          </span>
+        </p>
+      </div>
+
+    </div>
+
+    <form
+      [formGroup]="clientForm"
+      (ngSubmit)="saveClient()"
+      novalidate
+    >
+
+      <div class="form-body">
+
+        <!-- CLIENT TYPE -->
+        <div class="client-type-section">
+
+          <div class="form-field">
+
+            <label for="clientTypeId">
+              Client Type
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-tags field-icon"></i>
+
+              <select
+                id="clientTypeId"
+                class="form-select"
+                formControlName="clientTypeId"
+                [class.is-invalid]="isInvalid('clientTypeId')"
+              >
+                <option [ngValue]="0">
+                  Select Client Type
+                </option>
+
+                <option
+                  *ngFor="let type of clientTypes"
+                  [ngValue]="type.id"
+                >
+                  {{ type.name }}
+                </option>
+              </select>
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('clientTypeId')"
+              class="invalid-feedback d-block"
+            >
+              Please select a client type.
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- FIRST ROW -->
+        <div class="form-grid">
+
+          <!-- NAME -->
+          <div class="form-field">
+
+            <label for="name">
+              Name
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-person field-icon"></i>
+
+              <input
+                id="name"
+                type="text"
+                class="form-control"
+                formControlName="name"
+                placeholder="Enter client name"
+                maxlength="200"
+                [class.is-invalid]="isInvalid('name')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('name')"
+              class="invalid-feedback d-block"
+            >
+              Name is required (maximum 200 characters).
+            </div>
+
+          </div>
+
+          <!-- ADDRESS -->
+          <div class="form-field">
+
+            <label for="address">
+              Address
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-geo-alt field-icon"></i>
+
+              <input
+                id="address"
+                type="text"
+                class="form-control"
+                formControlName="address"
+                placeholder="Enter address"
+                maxlength="250"
+                [class.is-invalid]="isInvalid('address')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('address')"
+              class="invalid-feedback d-block"
+            >
+              Address is required (maximum 250 characters).
+            </div>
+
+          </div>
+
+          <!-- CITY -->
+          <div class="form-field">
+
+            <label for="city">
+              City
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-buildings field-icon"></i>
+
+              <input
+                id="city"
+                type="text"
+                class="form-control"
+                formControlName="city"
+                placeholder="Enter city"
+                maxlength="100"
+                [class.is-invalid]="isInvalid('city')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('city')"
+              class="invalid-feedback d-block"
+            >
+              City is required (maximum 100 characters).
+            </div>
+
+          </div>
+
+          <!-- SECOND ROW -->
+
+          <!-- PHONE -->
+          <div class="form-field">
+
+            <label for="phone">
+              Phone
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-telephone field-icon"></i>
+
+              <input
+                id="phone"
+                type="tel"
+                class="form-control"
+                formControlName="phone"
+                placeholder="Enter phone number"
+                maxlength="50"
+                [class.is-invalid]="isInvalid('phone')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('phone')"
+              class="invalid-feedback d-block"
+            >
+              Phone number is required.
+            </div>
+
+          </div>
+
+          <!-- EMAIL -->
+          <div class="form-field">
+
+            <label for="email">
+              Email
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-envelope field-icon"></i>
+
+              <input
+                id="email"
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Enter email address"
+                maxlength="200"
+                [class.is-invalid]="isInvalid('email')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('email')"
+              class="invalid-feedback d-block"
+            >
+              Please enter a valid email address.
+            </div>
+
+          </div>
+
+          <!-- TAX NUMBER -->
+          <div class="form-field">
+
+            <label for="taxNumber">
+              Tax Number
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-hash field-icon"></i>
+
+              <input
+                id="taxNumber"
+                type="text"
+                class="form-control"
+                formControlName="taxNumber"
+                placeholder="Enter tax number"
+                maxlength="50"
+                [class.is-invalid]="isInvalid('taxNumber')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('taxNumber')"
+              class="invalid-feedback d-block"
+            >
+              Tax number is required.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FORM FOOTER -->
+      <div class="form-footer">
+
+        <button
+          type="button"
+          class="btn-back"
+          (click)="backToClients()"
+          [disabled]="isSaving"
+        >
+          <i class="bi bi-arrow-left"></i>
+          Back to Clients
+        </button>
+
+        <button
+          type="submit"
+          class="btn-save"
+          [disabled]="isSaving || isLoading || isLoadingTypes"
+        >
+
+          <span
+            *ngIf="isSaving"
+            class="spinner-border spinner-border-sm"
+            role="status"
+          ></span>
+
+          <i
+            *ngIf="!isSaving"
+            class="bi bi-check-lg"
+          ></i>
+
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+</div>

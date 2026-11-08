@@ -1,0 +1,161 @@
+
+<div class="client-type-detail-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+
+    <div>
+      <div class="page-label">
+        <i class="bi bi-tags"></i>
+        CLIENT TYPE MANAGEMENT
+      </div>
+
+      <h1>Client Type Details</h1>
+
+      <p>
+        View the information of the selected client type.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ERROR ALERT -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- LOADING -->
+  <div
+    *ngIf="isLoading"
+    class="loading-panel"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    >
+      <span class="visually-hidden">
+        Loading...
+      </span>
+    </div>
+
+    <p>Loading client type details...</p>
+  </div>
+
+  <!-- CLIENT TYPE DETAILS -->
+  <section
+    *ngIf="!isLoading && clientType"
+    class="detail-panel"
+  >
+
+    <!-- DETAIL HEADER -->
+    <div class="detail-header">
+
+      <div class="detail-header-icon">
+        <i class="bi bi-tag"></i>
+      </div>
+
+      <div>
+        <h2>Client Type Information</h2>
+
+        <p>
+          Client Type ID:
+          <span class="record-id">
+            #{{ clientType.id }}
+          </span>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- DETAIL BODY -->
+    <div class="detail-body">
+
+      <!-- FIRST ROW: NAME AND DESCRIPTION -->
+      <div class="detail-grid">
+
+        <!-- NAME -->
+        <div class="detail-field">
+
+          <label>Name</label>
+
+          <div class="detail-value">
+
+            <i class="bi bi-tag field-icon"></i>
+
+            <span>
+              {{ clientType.name || '—' }}
+            </span>
+
+          </div>
+
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="detail-field">
+
+          <label>Description</label>
+
+          <div class="detail-value">
+
+            <i class="bi bi-card-text field-icon"></i>
+
+            <span>
+              {{ clientType.description || '—' }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DETAIL FOOTER -->
+    <div class="detail-footer">
+
+      <button
+        type="button"
+        class="btn-back"
+        (click)="backToClientTypes()"
+      >
+        <i class="bi bi-arrow-left"></i>
+        Back to Client Types
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- ERROR / NO DATA ACTION -->
+  <div
+    *ngIf="!isLoading && !clientType"
+    class="empty-panel"
+  >
+    <div class="empty-icon">
+      <i class="bi bi-exclamation-circle"></i>
+    </div>
+
+    <h3>Client Type Unavailable</h3>
+
+    <p>
+      The requested client type could not be displayed.
+    </p>
+
+    <button
+      type="button"
+      class="btn-back"
+      (click)="backToClientTypes()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Back to Client Types
+    </button>
+
+  </div>
+
+</div>

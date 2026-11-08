@@ -1,0 +1,162 @@
+
+<div class="dashboard-container">
+
+  <!-- Page Header -->
+  <div class="dashboard-header">
+
+    <div class="header-content">
+      <div class="page-label">
+        <i class="bi bi-grid-1x2"></i>
+        Overview
+      </div>
+
+      <h1>Dashboard</h1>
+
+      <p>
+        Welcome to Cloud Client Management.
+        Monitor your clients and client types in real time.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-btn"
+      (click)="loadStatistics()"
+      [disabled]="isLoading"
+    >
+      <i
+        class="bi bi-arrow-clockwise"
+        [class.spin]="isLoading"
+      ></i>
+      {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+    </button>
+
+  </div>
+
+  <!-- Error Message -->
+  <div
+    *ngIf="errorMessage"
+    class="error-alert"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle"></i>
+    <span>{{ errorMessage }}</span>
+
+    <button
+      type="button"
+      (click)="loadStatistics()"
+      [disabled]="isLoading"
+    >
+      Try again
+    </button>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="statistics-grid">
+
+    <!-- Total Clients -->
+    <div class="stat-card">
+
+      <div class="stat-card-top">
+
+        <div class="stat-icon clients-icon">
+          <i class="bi bi-people-fill"></i>
+        </div>
+
+        <span class="stat-category">
+          CLIENT MANAGEMENT
+        </span>
+
+      </div>
+
+      <div class="stat-card-body">
+
+        <h3>Total Clients</h3>
+
+        <div class="stat-value">
+             {{ statistics.totalClients | number }}
+        </div>
+
+        <p>
+          Registered clients in the system
+        </p>
+
+      </div>
+
+      <div class="stat-card-footer">
+        <i class="bi bi-database-check"></i>
+        Live database statistics
+      </div>
+
+    </div>
+
+    <!-- Total Client Types -->
+    <div class="stat-card">
+
+      <div class="stat-card-top">
+
+        <div class="stat-icon types-icon">
+          <i class="bi bi-tags-fill"></i>
+        </div>
+
+        <span class="stat-category">
+          CLASSIFICATION
+        </span>
+
+      </div>
+
+      <div class="stat-card-body">
+
+        <h3>Total Client Types</h3>
+
+        <div class="stat-value">
+           {{ statistics.totalClientTypes | number }}
+        </div>
+        <p>
+          Available client classifications
+        </p>
+
+      </div>
+
+      <div class="stat-card-footer">
+        <i class="bi bi-database-check"></i>
+        Live database statistics
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Loading Template -->
+  <ng-template #loadingValue>
+    <span class="loading-placeholder"></span>
+  </ng-template>
+
+  <!-- Information Panel -->
+  <div class="info-panel">
+
+    <div class="info-panel-icon">
+      <i class="bi bi-cloud-check"></i>
+    </div>
+
+    <div class="info-panel-content">
+
+      <h4>Cloud Client Management</h4>
+
+      <p>
+        This dashboard retrieves aggregated statistics
+        from the Statistics microservice, which communicates
+        with the Client and Client Type microservices.
+      </p>
+
+      <div class="update-info" *ngIf="lastUpdated">
+        <i class="bi bi-clock-history"></i>
+        Last updated:
+        {{ lastUpdated | date:'medium' }}
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

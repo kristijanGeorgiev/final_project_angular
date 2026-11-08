@@ -1,0 +1,490 @@
+
+<div class="clients-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+
+    <div>
+      <div class="page-label">
+        <i class="bi bi-people"></i>
+        CLIENT MANAGEMENT
+      </div>
+
+      <h1>Clients</h1>
+
+      <p>
+        Manage registered clients, search records,
+        and maintain client information.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="loadClients()"
+        [disabled]="isLoading"
+      >
+        <i
+          class="bi bi-arrow-clockwise"
+          [class.spin]="isLoading"
+        ></i>
+        Refresh
+      </button>
+
+      <button
+        type="button"
+        class="btn-add"
+        (click)="addClient()"
+      >
+        <i class="bi bi-plus-lg"></i>
+        Add Client
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+    role="status"
+  >
+    <i class="bi bi-check-circle me-2"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- FILTER PANEL -->
+  <section class="filter-panel">
+
+    <div class="filter-header">
+      <h2>
+        <i class="bi bi-funnel"></i>
+        Filter Clients
+      </h2>
+
+      <button
+        type="button"
+        class="btn-clear"
+        (click)="clearFilters()"
+      >
+        <i class="bi bi-x-circle"></i>
+        Clear Filters
+      </button>
+    </div>
+
+    <div class="filter-grid">
+
+      <!-- NAME -->
+      <div class="filter-field">
+        <label for="filterName">Name</label>
+        <input
+          id="filterName"
+          type="text"
+          class="form-control"
+          placeholder="Search by name"
+          [(ngModel)]="filters.name"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="filter-field">
+        <label for="filterAddress">Address</label>
+        <input
+          id="filterAddress"
+          type="text"
+          class="form-control"
+          placeholder="Search by address"
+          [(ngModel)]="filters.address"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- CITY -->
+      <div class="filter-field">
+        <label for="filterCity">City</label>
+        <input
+          id="filterCity"
+          type="text"
+          class="form-control"
+          placeholder="Search by city"
+          [(ngModel)]="filters.city"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- PHONE -->
+      <div class="filter-field">
+        <label for="filterPhone">Phone</label>
+        <input
+          id="filterPhone"
+          type="text"
+          class="form-control"
+          placeholder="Search by phone"
+          [(ngModel)]="filters.phone"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- EMAIL -->
+      <div class="filter-field">
+        <label for="filterEmail">Email</label>
+        <input
+          id="filterEmail"
+          type="text"
+          class="form-control"
+          placeholder="Search by email"
+          [(ngModel)]="filters.email"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <!-- TAX NUMBER -->
+      <div class="filter-field">
+        <label for="filterTaxNumber">Tax Number</label>
+        <input
+          id="filterTaxNumber"
+          type="text"
+          class="form-control"
+          placeholder="Search by tax number"
+          [(ngModel)]="filters.taxNumber"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLIENT TABLE -->
+  <section class="table-panel">
+
+    <div class="table-header">
+
+      <div>
+        <h2>Client Records</h2>
+        <p>{{ totalItems }} client(s) found</p>
+      </div>
+
+      <div class="table-options">
+
+        <label for="pageSize">Show</label>
+
+        <select
+          id="pageSize"
+          class="form-select"
+          [(ngModel)]="pageSize"
+          (ngModelChange)="changePageSize()"
+        >
+          <option
+            *ngFor="let size of pageSizeOptions"
+            [ngValue]="size"
+          >
+            {{ size }}
+          </option>
+        </select>
+
+        <span>entries</span>
+
+      </div>
+    </div>
+
+    <div class="table-responsive">
+
+      <table class="table clients-table">
+
+        <!-- TABLE HEADER -->
+        <thead>
+          <tr>
+
+            <th>
+              <button
+                type="button"
+                class="sort-button"
+                (click)="sortById()"
+              >
+                ID
+
+                <i
+                  class="bi"
+                  [ngClass]="
+                    sortDirection === 'asc'
+                      ? 'bi-sort-numeric-down'
+                      : 'bi-sort-numeric-up'
+                  "
+                ></i>
+              </button>
+            </th>
+
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Tax Number</th>
+            <th class="actions-column">Actions</th>
+
+          </tr>
+        </thead>
+
+        <!-- TABLE BODY -->
+        <tbody>
+
+          <!-- LOADING -->
+          <tr *ngIf="isLoading">
+            <td colspan="8" class="state-cell">
+
+              <div
+                class="spinner-border spinner-border-sm text-primary"
+                role="status"
+              ></div>
+
+              <span class="ms-2">
+                Loading clients...
+              </span>
+
+            </td>
+          </tr>
+
+          <ng-container *ngIf="!isLoading">
+
+            <!-- CLIENT ROW -->
+            <tr
+              *ngFor="
+                let client of paginatedClients;
+                trackBy: trackByClientId
+              "
+            >
+
+              <!-- ID -->
+              <td>
+                <span class="client-id">
+                  #{{ client.id }}
+                </span>
+              </td>
+
+              <!-- NAME -->
+              <td>
+                <strong class="client-name">
+                  {{ client.name }}
+                </strong>
+              </td>
+
+              <!-- ADDRESS -->
+              <td>
+                {{ client.address }}
+              </td>
+
+              <!-- CITY -->
+              <td>
+                {{ client.city }}
+              </td>
+
+              <!-- PHONE -->
+              <td>
+                <a [href]="'tel:' + client.phone">
+                  {{ client.phone }}
+                </a>
+              </td>
+
+              <!-- EMAIL -->
+              <td>
+                <a [href]="'mailto:' + client.email">
+                  {{ client.email }}
+                </a>
+              </td>
+
+              <!-- TAX NUMBER -->
+              <td>
+                <span class="tax-number">
+                  {{ client.taxNumber }}
+                </span>
+              </td>
+
+              <!-- ACTION BUTTONS -->
+              <td class="actions-column">
+
+                <div class="row-actions">
+
+                  <!-- VIEW CLIENT -->
+                  <button
+                    type="button"
+                    class="action-btn view"
+                    title="View Client"
+                    [attr.aria-label]="'View client ' + client.id"
+                    (click)="viewClient(client.id)"
+                  >
+                    <i class="bi bi-eye"></i>
+                    <span>View Client</span>
+                  </button>
+
+                  <!-- EDIT CLIENT -->
+                  <button
+                    type="button"
+                    class="action-btn edit"
+                    title="Edit Client"
+                    [attr.aria-label]="'Edit client ' + client.id"
+                    (click)="editClient(client.id)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Edit Client</span>
+                  </button>
+
+                  <!-- DELETE CLIENT -->
+                  <button
+                    type="button"
+                    class="action-btn delete"
+                    title="Delete Client"
+                    [attr.aria-label]="'Delete client ' + client.id"
+                    [disabled]="isDeleting"
+                    (click)="deleteClient(client)"
+                  >
+
+                    <i
+                      class="bi"
+                      [ngClass]="
+                        deletingClientId === client.id
+                          ? 'bi-hourglass-split'
+                          : 'bi-trash'
+                      "
+                    ></i>
+
+                    <span>
+                      {{
+                        deletingClientId === client.id
+                          ? 'Deleting...'
+                          : 'Delete Client'
+                      }}
+                    </span>
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+            <!-- EMPTY STATE -->
+            <tr *ngIf="paginatedClients.length === 0">
+
+              <td colspan="8" class="state-cell">
+
+                <div class="empty-state">
+
+                  <i class="bi bi-inbox"></i>
+
+                  <h3>No clients found</h3>
+
+                  <p>
+                    No client records match your filters.
+                  </p>
+
+                  <button
+                    type="button"
+                    class="btn-clear"
+                    (click)="clearFilters()"
+                  >
+                    Clear Filters
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          </ng-container>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-footer">
+
+      <div class="pagination-info">
+
+        Showing
+        <strong>{{ startItem }}</strong>
+        to
+        <strong>{{ endItem }}</strong>
+        of
+        <strong>{{ totalItems }}</strong>
+        entries
+
+      </div>
+
+      <nav aria-label="Client pagination">
+
+        <ul class="pagination mb-0">
+
+          <!-- PREVIOUS -->
+          <li
+            class="page-item"
+            [class.disabled]="currentPage === 1"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)"
+            >
+              Previous
+            </button>
+          </li>
+
+          <!-- PAGE NUMBERS -->
+          <li
+            *ngFor="let page of visiblePages"
+            class="page-item"
+            [class.active]="page === currentPage"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [attr.aria-current]="
+                page === currentPage ? 'page' : null
+              "
+              (click)="changePage(page)"
+            >
+              {{ page }}
+            </button>
+          </li>
+
+          <!-- NEXT -->
+          <li
+            class="page-item"
+            [class.disabled]="currentPage === totalPages"
+          >
+            <button
+              type="button"
+              class="page-link"
+              [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)"
+            >
+              Next
+            </button>
+          </li>
+
+        </ul>
+
+      </nav>
+
+    </div>
+
+  </section>
+
+</div>

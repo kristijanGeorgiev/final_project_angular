@@ -1,0 +1,242 @@
+
+<div class="client-type-edit-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="page-label">
+        <i class="bi bi-tags"></i>
+        CLIENT TYPE MANAGEMENT
+      </div>
+
+      <h1>Edit Client Type</h1>
+
+      <p>
+        Update the information of the selected client type.
+      </p>
+    </div>
+  </div>
+
+  <!-- ERROR ALERT -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- LOADING -->
+  <div
+    *ngIf="isLoading"
+    class="loading-panel"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    >
+      <span class="visually-hidden">
+        Loading...
+      </span>
+    </div>
+
+    <p>Loading client type information...</p>
+  </div>
+
+  <!-- EDIT FORM -->
+  <section
+    *ngIf="!isLoading && isLoaded"
+    class="form-panel"
+  >
+
+    <!-- FORM HEADER -->
+    <div class="form-header">
+
+      <div class="form-header-icon">
+        <i class="bi bi-pencil-square"></i>
+      </div>
+
+      <div>
+        <h2>Client Type Information</h2>
+
+        <p>
+          Editing Client Type ID:
+          <span class="record-id">
+            #{{ clientTypeId }}
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- REACTIVE FORM -->
+    <form
+      [formGroup]="clientTypeForm"
+      (ngSubmit)="saveClientType()"
+      novalidate
+    >
+
+      <div class="form-body">
+
+        <!-- FIRST ROW: NAME AND DESCRIPTION -->
+        <div class="form-grid">
+
+          <!-- NAME -->
+          <div class="form-field">
+
+            <label for="name">
+              Name
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-tag field-icon"></i>
+
+              <input
+                id="name"
+                type="text"
+                class="form-control"
+                formControlName="name"
+                placeholder="Enter client type name"
+                maxlength="200"
+                [class.is-invalid]="isInvalid('name')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('name')"
+              class="invalid-feedback d-block"
+            >
+              <span
+                *ngIf="clientTypeForm.controls.name.hasError('required')"
+              >
+                Client type name is required.
+              </span>
+
+              <span
+                *ngIf="clientTypeForm.controls.name.hasError('maxlength')"
+              >
+                Name cannot exceed 200 characters.
+              </span>
+            </div>
+
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="form-field">
+
+            <label for="description">
+              Description
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-card-text field-icon"></i>
+
+              <input
+                id="description"
+                type="text"
+                class="form-control"
+                formControlName="description"
+                placeholder="Enter client type description"
+                maxlength="1000"
+                [class.is-invalid]="isInvalid('description')"
+              />
+
+            </div>
+
+            <div
+              *ngIf="isInvalid('description')"
+              class="invalid-feedback d-block"
+            >
+              <span
+                *ngIf="clientTypeForm.controls.description.hasError('required')"
+              >
+                Description is required.
+              </span>
+
+              <span
+                *ngIf="clientTypeForm.controls.description.hasError('maxlength')"
+              >
+                Description cannot exceed 1000 characters.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FORM FOOTER -->
+      <div class="form-footer">
+
+        <!-- BACK -->
+        <button
+          type="button"
+          class="btn-back"
+          (click)="backToClientTypes()"
+          [disabled]="isSaving"
+        >
+          <i class="bi bi-arrow-left"></i>
+          Back to Client Types
+        </button>
+
+        <!-- SAVE -->
+        <button
+          type="submit"
+          class="btn-save"
+          [disabled]="isSaving || !isLoaded"
+        >
+
+          <span
+            *ngIf="isSaving"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+
+          <i
+            *ngIf="!isSaving"
+            class="bi bi-check-lg"
+          ></i>
+
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <!-- UNAVAILABLE -->
+  <div
+    *ngIf="!isLoading && !isLoaded"
+    class="empty-panel"
+  >
+    <div class="empty-icon">
+      <i class="bi bi-exclamation-circle"></i>
+    </div>
+
+    <h3>Client Type Unavailable</h3>
+
+    <p>
+      The requested client type could not be loaded for editing.
+    </p>
+
+    <button
+      type="button"
+      class="btn-back"
+      (click)="backToClientTypes()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Back to Client Types
+    </button>
+  </div>
+
+</div>

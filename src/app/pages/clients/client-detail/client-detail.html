@@ -1,0 +1,171 @@
+
+<div class="client-detail-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="page-label">
+        <i class="bi bi-person-vcard"></i>
+        CLIENT MANAGEMENT
+      </div>
+
+      <h1>Client Details</h1>
+
+      <p>
+        View registered client information.
+      </p>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    ></div>
+
+    <p>Loading client details...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div
+    *ngIf="errorMessage && !isLoading"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- CLIENT DETAILS -->
+  <div
+    class="detail-card"
+    *ngIf="client && !isLoading"
+  >
+
+    <!-- CARD HEADER -->
+    <div class="detail-card-header">
+      <div class="client-avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <div class="client-heading">
+        <h2>{{ client.name }}</h2>
+        <span>Client ID: #{{ client.id }}</span>
+      </div>
+    </div>
+
+    <!-- FIRST ROW -->
+    <div class="detail-grid">
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-person"></i>
+        </div>
+
+        <label>Name</label>
+        <div class="field-value">
+          {{ client.name || '—' }}
+        </div>
+      </div>
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-geo-alt"></i>
+        </div>
+
+        <label>Address</label>
+        <div class="field-value">
+          {{ client.address || '—' }}
+        </div>
+      </div>
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-buildings"></i>
+        </div>
+
+        <label>City</label>
+        <div class="field-value">
+          {{ client.city || '—' }}
+        </div>
+      </div>
+
+      <!-- SECOND ROW -->
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-telephone"></i>
+        </div>
+
+        <label>Phone</label>
+        <div class="field-value">
+          <a
+            *ngIf="client.phone; else noPhone"
+            [href]="'tel:' + client.phone"
+          >
+            {{ client.phone }}
+          </a>
+
+          <ng-template #noPhone>—</ng-template>
+        </div>
+      </div>
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-envelope"></i>
+        </div>
+
+        <label>Email</label>
+        <div class="field-value">
+          <a
+            *ngIf="client.email; else noEmail"
+            [href]="'mailto:' + client.email"
+          >
+            {{ client.email }}
+          </a>
+
+          <ng-template #noEmail>—</ng-template>
+        </div>
+      </div>
+
+      <div class="detail-field">
+        <div class="field-icon">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+
+        <label>Tax Number</label>
+        <div class="field-value tax-number">
+          {{ client.taxNumber || '—' }}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BUTTON -->
+    <div class="detail-card-footer">
+      <button
+        type="button"
+        class="btn-back"
+        (click)="backToClients()"
+      >
+        <i class="bi bi-arrow-left"></i>
+        Back to Clients
+      </button>
+    </div>
+
+  </div>
+
+  <!-- BACK BUTTON ON ERROR -->
+  <div *ngIf="errorMessage && !isLoading" class="error-actions">
+    <button
+      type="button"
+      class="btn-back"
+      (click)="backToClients()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Back to Clients
+    </button>
+  </div>
+
+</div>
