@@ -48,6 +48,9 @@ importers:
       '@angular/compiler-cli':
         specifier: ^21.2.0
         version: 21.2.26(@angular/compiler@21.2.26)(typescript@5.9.3)
+      '@jridgewell/sourcemap-codec':
+        specifier: ^1.6.0
+        version: 1.6.0
       jsdom:
         specifier: ^28.0.0
         version: 28.1.0
