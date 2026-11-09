@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   build_and_deploy:
+    name: Build and Deploy Angular
     runs-on: ubuntu-latest
 
     steps:
@@ -32,11 +33,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Angular
+      - name: Build Angular production
         run: pnpm exec ng build --configuration production
 
-      - name: Verify Angular build
-        run: test -f dist/client-management-ui/browser/index.html
+      - name: Verify build output
+        run: |
+          test -f dist/client-management-ui/browser/index.html
+          ls -la dist/client-management-ui/browser
+
+      - name: Verify deployment token
+        env:
+          SWA_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: |
+          if [ -z "$SWA_TOKEN" ]; then
+            echo "::error::Azure Static Web Apps deployment token is missing"
+            exit 1
+          fi
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
